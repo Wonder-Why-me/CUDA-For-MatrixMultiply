@@ -20,6 +20,20 @@
 			],
 			"group": "build",
 			"detail": "编译器: /usr/bin/gcc"
+		},
+		{
+			"type": "shell",
+			"label": "CUDA C++",
+			"command": "nvcc",
+			"args": [
+				"-std=c++17",
+				"-g",
+				"-G",
+				"-o",
+				"${fileDirname}/${fileBasenameNoExtension}",
+				"${file}",
+				"-lcublas"
+			]
 		}
 	]
 }
