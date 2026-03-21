@@ -112,24 +112,6 @@ void d2h_copy(Matrix *mat)
                           cudaMemcpyDeviceToHost));
 }
 
-// 打印矩阵（小矩阵用）
-void print_matrix(const Matrix *mat, const char *name)
-{
-    printf("\n%s (%d x %d):\n", name, mat->rows, mat->cols);
-    for (int i = 0; i < mat->rows && i < 6; i++)
-    {
-        for (int j = 0; j < mat->cols && j < 6; j++)
-        {
-            printf("%8.3f ", mat->h_data[i * mat->cols + j]);
-        }
-        if (mat->cols > 6)
-            printf(" ...");
-        printf("\n");
-    }
-    if (mat->rows > 6)
-        printf(" ...\n");
-}
-
 // 验证两个矩阵是否相等
 int verify_matrix(const Matrix *C1, const Matrix *C2, float tolerance)
 {
@@ -252,11 +234,11 @@ BenchmarkResult run_benchmark(int m, int k, int n, int num_runs)
     // 创建矩阵
     Matrix *A = create_matrix(m, k);
     Matrix *B = create_matrix(k, n);
-    Matrix *C_cpu = create_matrix(m, n);
+    // Matrix *C_cpu = create_matrix(m, n);
     Matrix *C_gpu = create_matrix(m, n);
     Matrix *C_ref = create_matrix(m, n);
 
-    if (!A || !B || !C_cpu || !C_gpu || !C_ref)
+    if (!A || !B || !C_gpu || !C_ref)
     {
         printf("内存分配失败!\n");
         return result;
@@ -340,20 +322,11 @@ BenchmarkResult run_benchmark(int m, int k, int n, int num_runs)
     printf("\n[验证] ");
     result.correct = verify_matrix(C_ref, C_gpu, 1e-4);
 
-    // 小矩阵打印结果
-    if (m <= 5 && n <= 5 && k <= 5)
-    {
-        print_matrix(A, "矩阵 A");
-        print_matrix(B, "矩阵 B");
-        print_matrix(C_ref, "结果 C (CPU)");
-        print_matrix(C_gpu, "结果 C (GPU)");
-    }
-
     // 清理
     cublasDestroy(handle);
     free_matrix(A);
     free_matrix(B);
-    free_matrix(C_cpu);
+    // free_matrix(C_cpu);
     free_matrix(C_gpu);
     free_matrix(C_ref);
 
@@ -410,12 +383,9 @@ int main()
 
     printf("\n========================================\n\n");
 
-    // 定义测试用例：各种矩阵形状
+    // 定义测试用例：各种矩阵形ls
     // 格式: {m, k, n}
     int test_cases[][3] = {
-        // 小矩阵（用于验证）
-        {4, 5, 3},
-        {16, 16, 16},
 
         // 中等方阵
         {256, 256, 256},

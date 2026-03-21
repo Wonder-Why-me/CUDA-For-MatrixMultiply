@@ -28,7 +28,7 @@
 			"args": [
 				"-std=c++17",
 				"-g",
-				"-G",
+				"-O3",
 				"-o",
 				"${fileDirname}/${fileBasenameNoExtension}",
 				"${file}",
